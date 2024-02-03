@@ -8,6 +8,10 @@ import (
 	"os"
 )
 
+// todo; upgrade to structured logging
+// todo: set up routes.go
+// todo: set up tests
+
 var localMode = true
 var logfile = "./server.log"
 
