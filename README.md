@@ -1,1 +1,1 @@
-This will become a mock API server
+Practice API server
