@@ -44,9 +44,9 @@ func run() error {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", homeHandler)
-	mux.HandleFunc("/apix/test", apixTest)
-	mux.Handle("/api/test", authMiddleware(http.HandlerFunc(apiTest)))
-	mux.Handle("/api/ps", authMiddleware(http.HandlerFunc(makeAuthenticatedCall)))
+	mux.HandleFunc("/api/v1/testpublic", testPublic)
+	mux.Handle("/api/v1/testprivate", authMiddleware(http.HandlerFunc(testPrivate)))
+	mux.Handle("/api/v1/testauthenticated", authMiddleware(http.HandlerFunc(testAuthenticated)))
 
 	fmt.Println("Server is running on port:", port)
 	if err := http.ListenAndServe(":"+port, securityHeadersMiddleware(mux)); err != nil {

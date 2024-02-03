@@ -12,16 +12,16 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Hello World")
 }
 
-func apixTest(w http.ResponseWriter, r *http.Request) {
+func testPublic(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Public route successful")
 }
 
-func apiTest(w http.ResponseWriter, r *http.Request) {
+func testPrivate(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Protected route successful")
 }
 
 // todo: handle no such host error
-func makeAuthenticatedCall(w http.ResponseWriter, r *http.Request) {
+func testAuthenticated(w http.ResponseWriter, r *http.Request) {
 	config, err := loadConfig("config.json")
 	if err != nil {
 		fmt.Println("Error loading config:", err)
