@@ -1,1 +1,1 @@
-This will become a mock mobile API server
+This will become a mock API server
