@@ -10,6 +10,7 @@ import (
 // todo; upgrade to structured logging
 // todo: set up routes.go
 // todo: set up tests
+// todo: consider json -> toml
 
 var localMode = true
 var logfile = "./server.log"
