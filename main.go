@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,20 +13,6 @@ import (
 
 var localMode = true
 var logfile = "./server.log"
-
-type Config struct {
-	HRMS        HRMS        `json:"HRMS"`
-	SSOProvider SSOProvider `json:"SSOProvider"`
-}
-
-type HRMS struct {
-	URL   string `json:"url"`
-	Token string `json:"token"`
-}
-
-type SSOProvider struct {
-	UserInfoURL string `json:"userInfoUrl"`
-}
 
 func main() {
 	if err := run(); err != nil {
@@ -67,21 +52,4 @@ func run() error {
 		return err
 	}
 	return nil
-}
-
-func loadConfig(filename string) (Config, error) {
-	var config Config
-
-	file, err := os.Open(filename)
-	if err != nil {
-		return config, err
-	}
-	defer file.Close()
-
-	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&config)
-	if err != nil {
-		return config, err
-	}
-	return config, nil
 }
