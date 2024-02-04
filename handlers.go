@@ -20,7 +20,6 @@ func testPrivate(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Protected route successful")
 }
 
-// todo: handle no such host error
 func testAuthenticated(w http.ResponseWriter, r *http.Request) {
 	config, err := loadConfig("config.json")
 	if err != nil {
