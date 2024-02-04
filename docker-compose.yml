@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   go-api-server:
@@ -8,3 +8,11 @@ services:
     ports:
       - "3002:3002"
     command: ["app"]
+
+  mongodb:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: name
+      MONGO_INITDB_ROOT_PASSWORD: passwords
+    ports:
+      - "27017:27017"
