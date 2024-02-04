@@ -30,19 +30,13 @@ func TestHomeHandler(t *testing.T) {
 }
 
 func TestTestPublic(t *testing.T) {
-	// Create a request with a dummy path
 	req, err := http.NewRequest("GET", "/testpublic", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// Create a ResponseRecorder to record the response
 	rr := httptest.NewRecorder()
-
-	// Create a handler function
 	handler := http.HandlerFunc(testPublic)
-
-	// Serve the HTTP request to the ResponseRecorder
 	handler.ServeHTTP(rr, req)
 
 	// Check the status code
