@@ -11,8 +11,6 @@ import (
 // todo: set up routes.go
 // todo: set up tests
 // todo: consider json -> toml
-// todo: make port flag
-// todo: docker
 
 var localMode = true
 var logfile = "./server.log"
