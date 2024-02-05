@@ -9,10 +9,11 @@ services:
       - "3002:3002"
     command: ["app"]
 
-  mongodb:
-    image: mongo:latest
+  postgres:
+    image: postgres:latest
     environment:
-      MONGO_INITDB_ROOT_USERNAME: name
-      MONGO_INITDB_ROOT_PASSWORD: passwords
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: passwords
+      POSTGRES_DB: API_DB
     ports:
-      - "27017:27017"
+      - "5432:5432"
