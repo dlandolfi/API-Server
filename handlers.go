@@ -9,6 +9,7 @@ import (
 
 // Handlers
 func homeHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("log homehandler")
 	io.WriteString(w, "Hello World")
 }
 
