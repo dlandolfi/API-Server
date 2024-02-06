@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	_ "github.com/lib/pq" // Import the PostgreSQL driver
+	_ "github.com/lib/pq"
 )
 
 // todo; upgrade to structured logging
@@ -35,7 +35,6 @@ func run() error {
 	if localMode {
 		logFile = os.Stdout
 	} else {
-
 		logFile, err = os.OpenFile(logfile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 		if err != nil {
 			log.Fatal(err)
@@ -44,10 +43,11 @@ func run() error {
 	defer logFile.Close()
 	log.SetOutput(logFile)
 
-	makeDb()
+	makeDbConnection()
 
 	mux := http.NewServeMux()
 
+	// Routes
 	mux.HandleFunc("/", homeHandler)
 	mux.HandleFunc("/api/v1/testpublic", testPublic)
 	mux.Handle("/api/v1/testprivate", authMiddleware(http.HandlerFunc(testPrivate)))
@@ -60,11 +60,9 @@ func run() error {
 	return nil
 }
 
-func makeDb() {
+func makeDbConnection() {
 	// PostgreSQL connection parameters
-	// connStr := "user=user password=passwords dbname=API_DB sslmode=disable"
 	connStr := "postgres://user:passwords@postgres:5432/API_DB?sslmode=disable"
-	// connStr := "postgres://API_DB?host=0.0.0.0:5432&user=user&password=passwords"
 
 	// Open a database connection
 	db, err := sql.Open("postgres", connStr)

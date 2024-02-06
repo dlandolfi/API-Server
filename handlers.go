@@ -9,11 +9,11 @@ import (
 
 // Handlers
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("log homehandler")
 	io.WriteString(w, "Hello World")
 }
 
 func testPublic(w http.ResponseWriter, r *http.Request) {
+	log.Println("Public Test route hit!")
 	io.WriteString(w, "Public route successful")
 }
 
