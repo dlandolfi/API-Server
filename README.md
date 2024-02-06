@@ -1,6 +1,6 @@
 # Practice API server
 
-This is a practice API server for my friends and I. Currently there is a Go backend and a Postgres database. There are plans to add more microservices are soon.
+This is a practice API server for my friends and I. Currently there is a Go backend and a Postgres database. There are plans to add more microservices soon.
 
 ## Getting Started
 
@@ -15,24 +15,24 @@ This is a practice API server for my friends and I. Currently there is a Go back
 
 ### Home Route
 
-- Endpoint: /
-- Description: Displays a simple "Hello World" message.
+- **Endpoint**: `/`
+- **Description**: Displays a simple "Hello World" message.
 
 ### Public Test Route
 
-- Endpoint: /api/v1/testpublic
-- Description: A public route for testing purposes.
+- **Endpoint**: `/api/v1/testpublic`
+- **Description**: A public route for testing purposes.
 
 ### Protected Test Route
 
-- Endpoint: /api/v1/testprivate
-- Description: A protected route requiring authentication.
+- **Endpoint**: `/api/v1/testprivate`
+- **Description**: A protected route requiring authentication.
 
 ### Authenticated Test Route
 
-- Endpoint: /api/v1/testauthenticated
-- Description: An authenticated route making an external API request.
-- Note: A `config.json` with valid credentials will be needed.
+- **Endpoint**: `/api/v1/testauthenticated`
+- **Description**: An authenticated route making an external API request.
+- **Note**: A `config.json` with valid credentials will be needed.
 
 ## Dependencies
 
