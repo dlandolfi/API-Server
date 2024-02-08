@@ -62,10 +62,8 @@ func run() error {
 }
 
 func makeDbConnection() {
-	// PostgreSQL connection parameters
 	connStr := "postgres://user:passwords@postgres:5432/API_DB?sslmode=disable"
 
-	// Open a database connection
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
