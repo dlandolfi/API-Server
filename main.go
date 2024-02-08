@@ -1,12 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
+	"example.com/m/v2/sqlc/api"
 	"github.com/gorilla/mux"
+	"github.com/jackc/pgx/v5"
 )
 
 // todo; upgrade to structured logging
@@ -58,6 +61,19 @@ func run() error {
 		return err
 	}
 	return nil
+}
+func dbConnect() (context.Context, *api.Queries) {
+	ctx := context.Background()
+
+	connStr := "postgres://user:passwords@postgres:5432/API_DB?sslmode=disable"
+	conn, err := pgx.Connect(ctx, connStr)
+	if err != nil {
+		log.Println(err)
+	}
+	defer conn.Close(ctx)
+
+	return ctx, api.New(conn)
+
 }
 
 // func makeDbConnection() {
