@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
@@ -45,16 +46,16 @@ func run() error {
 
 	makeDbConnection()
 
-	mux := http.NewServeMux()
+	r := mux.NewRouter()
 
 	// Routes
-	mux.HandleFunc("/", homeHandler)
-	mux.HandleFunc("/api/v1/testpublic", testPublic)
-	mux.Handle("/api/v1/testprivate", authMiddleware(http.HandlerFunc(testPrivate)))
-	mux.Handle("/api/v1/testauthenticated", authMiddleware(http.HandlerFunc(testAuthenticated)))
+	r.HandleFunc("/", homeHandler)
+	r.HandleFunc("/api/v1/testpublic", testPublic)
+	r.Handle("/api/v1/testprivate", authMiddleware(http.HandlerFunc(testPrivate)))
+	r.Handle("/api/v1/testauthenticated", authMiddleware(http.HandlerFunc(testAuthenticated)))
 
 	fmt.Println("Server is running on port:", port)
-	if err := http.ListenAndServe(":"+port, securityHeadersMiddleware(mux)); err != nil {
+	if err := http.ListenAndServe(":"+port, securityHeadersMiddleware(r)); err != nil {
 		return err
 	}
 	return nil
