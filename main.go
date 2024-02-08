@@ -1,14 +1,12 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/gorilla/mux"
-	_ "github.com/lib/pq"
 )
 
 // todo; upgrade to structured logging
@@ -44,7 +42,7 @@ func run() error {
 	defer logFile.Close()
 	log.SetOutput(logFile)
 
-	makeDbConnection()
+	// makeDbConnection()
 
 	r := mux.NewRouter()
 
@@ -53,6 +51,7 @@ func run() error {
 	r.HandleFunc("/api/v1/testpublic", testPublic)
 	r.Handle("/api/v1/testprivate", authMiddleware(http.HandlerFunc(testPrivate)))
 	r.Handle("/api/v1/testauthenticated", authMiddleware(http.HandlerFunc(testAuthenticated)))
+	r.HandleFunc("/testdb", testDb)
 
 	fmt.Println("Server is running on port:", port)
 	if err := http.ListenAndServe(":"+port, securityHeadersMiddleware(r)); err != nil {
@@ -61,19 +60,19 @@ func run() error {
 	return nil
 }
 
-func makeDbConnection() {
-	connStr := "postgres://user:passwords@postgres:5432/API_DB?sslmode=disable"
+// func makeDbConnection() {
+// 	connStr := "postgres://user:passwords@postgres:5432/API_DB?sslmode=disable"
 
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
+// 	db, err := sql.Open("postgres", connStr)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	defer db.Close()
 
-	// Check the connection
-	err = db.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("Connected to PostgreSQL!")
-}
+// 	// Check the connection
+// 	err = db.Ping()
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	fmt.Println("Connected to PostgreSQL!")
+// }
