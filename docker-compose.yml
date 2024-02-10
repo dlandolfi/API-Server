@@ -11,7 +11,7 @@ services:
     command: ["app"]
 
   postgres:
-    image: postgres:latest
+    image: postgres:alpine
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: passwords

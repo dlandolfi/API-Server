@@ -1,13 +1,13 @@
 package main
 
 import (
+	"api-server/sqlc/api"
 	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	"example.com/m/v2/sqlc/api"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v5"
 )

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"api-server/sqlc/api"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -9,7 +10,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"example.com/m/v2/sqlc/api"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
