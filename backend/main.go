@@ -28,7 +28,7 @@ func main() {
 }
 
 func run() error {
-	port := "3002"
+	port := "8080"
 
 	// Set up logging
 	// If localMode, use standard out instead of a file

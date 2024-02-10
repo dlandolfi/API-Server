@@ -58,7 +58,7 @@ func createUserInDb(w http.ResponseWriter, r *http.Request) {
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "Hello World")
+	io.WriteString(w, "Welcome to API server.")
 }
 
 func testPublic(w http.ResponseWriter, r *http.Request) {

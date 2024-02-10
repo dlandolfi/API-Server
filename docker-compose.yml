@@ -6,7 +6,7 @@ services:
       context: ./backend
       dockerfile: backend.dockerfile
     ports:
-      - "3002:3002"
+      - "8080:8080"
     restart: always
     command: ["app"]
 
