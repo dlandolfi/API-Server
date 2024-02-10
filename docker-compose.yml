@@ -3,8 +3,8 @@ version: "3"
 services:
   go-api-server:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./backend
+      dockerfile: backend.dockerfile
     ports:
       - "3002:3002"
     restart: always
@@ -19,4 +19,4 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ../database/data:/var/lib/postgresql/data
+      - ./database/data:/var/lib/postgresql/data
