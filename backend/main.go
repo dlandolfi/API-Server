@@ -45,8 +45,6 @@ func run() error {
 	defer logFile.Close()
 	log.SetOutput(logFile)
 
-	// makeDbConnection()
-
 	r := mux.NewRouter()
 
 	// Routes
@@ -54,7 +52,8 @@ func run() error {
 	r.HandleFunc("/api/v1/testpublic", testPublic)
 	r.Handle("/api/v1/testprivate", authMiddleware(http.HandlerFunc(testPrivate)))
 	r.Handle("/api/v1/testauthenticated", authMiddleware(http.HandlerFunc(testAuthenticated)))
-	r.HandleFunc("/testdb", testDb)
+	r.HandleFunc("/api/v1/getuser", getUserHandler) // /getuser?id=n
+	r.HandleFunc("/api/v1/insertuser", createUserInDb)
 
 	fmt.Println("Server is running on port:", port)
 	if err := http.ListenAndServe(":"+port, securityHeadersMiddleware(r)); err != nil {
@@ -62,33 +61,13 @@ func run() error {
 	}
 	return nil
 }
-func dbConnect() (context.Context, *api.Queries) {
-	ctx := context.Background()
-
+func dbConnect(ctx context.Context) (*api.Queries, error) {
 	connStr := "postgres://user:passwords@postgres:5432/API_DB?sslmode=disable"
 	conn, err := pgx.Connect(ctx, connStr)
 	if err != nil {
-		log.Println(err)
+		return nil, err
 	}
-	defer conn.Close(ctx)
 
-	return ctx, api.New(conn)
-
+	queries := api.New(conn)
+	return queries, nil
 }
-
-// func makeDbConnection() {
-// 	connStr := "postgres://user:passwords@postgres:5432/API_DB?sslmode=disable"
-
-// 	db, err := sql.Open("postgres", connStr)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	defer db.Close()
-
-// 	// Check the connection
-// 	err = db.Ping()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	fmt.Println("Connected to PostgreSQL!")
-// }

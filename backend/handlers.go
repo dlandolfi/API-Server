@@ -1,24 +1,61 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"strconv"
+
+	"example.com/m/v2/sqlc/api"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 // Handlers
-func testDb(w http.ResponseWriter, r *http.Request) {
-	ctx, queries := dbConnect()
-	user, err := queries.GetUser(ctx, 1)
+func getUserHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+	queries, err := dbConnect(ctx)
 	if err != nil {
-		http.Error(w, "An error has occured", http.StatusBadRequest)
-
 		log.Println(err)
 	}
+
+	id, err := strconv.Atoi(r.FormValue("id"))
+	if err != nil {
+		log.Println(err)
+	}
+	user, err := queries.GetUser(ctx, int32(id))
+	if err != nil {
+		http.Error(w, "An error has occured", http.StatusBadRequest)
+		log.Println("queries.getuser", err)
+		return
+	}
 	fmt.Println(user)
+
+	jsonBytes, err := json.Marshal(user)
+	if err != nil {
+		log.Println("Error: ", err)
+	}
+	result := string(jsonBytes)
+	io.WriteString(w, result)
 }
 
+func createUserInDb(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+	queries, err := dbConnect(ctx)
+	if err != nil {
+		log.Println(err)
+	}
+	err = queries.CreateUser(ctx, api.CreateUserParams{
+		FirstName: pgtype.Text{String: "Bruce", Valid: true},
+		LastName:  pgtype.Text{String: "Leo", Valid: true},
+		Email:     pgtype.Text{String: "leo@bruce.com", Valid: true},
+	})
+	if err != nil {
+		log.Println("create user error:", err)
+	}
+}
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Hello World")
 }
