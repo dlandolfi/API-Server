@@ -18,10 +18,11 @@ This is a practice API server for my friends and I. Currently there is a Go back
 - **Endpoint**: `/`
 - **Description**: Displays a simple "Hello World" message.
 
-### Public Test Route
+### Get User Route
 
-- **Endpoint**: `/api/v1/testpublic`
-- **Description**: A public route for testing purposes.
+- **Endpoint**: `/api/v1/getuser`
+- **Description**: A route for querying the database for a user by id
+- **Usage**: `curl -X GET "/api/v1/getuser?id=123"`
 
 ### Protected Test Route
 
@@ -33,9 +34,3 @@ This is a practice API server for my friends and I. Currently there is a Go back
 - **Endpoint**: `/api/v1/testauthenticated`
 - **Description**: An authenticated route making an external API request.
 - **Note**: A `config.json` with valid credentials will be needed.
-
-## Dependencies
-
-This project relies on the following external libraries:
-
-- [pq](https://github.com/lib/pq) v1.10.9

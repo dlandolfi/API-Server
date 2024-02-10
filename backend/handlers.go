@@ -56,6 +56,7 @@ func createUserInDb(w http.ResponseWriter, r *http.Request) {
 		log.Println("create user error:", err)
 	}
 }
+
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Hello World")
 }
