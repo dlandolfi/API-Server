@@ -13,7 +13,6 @@ import (
 )
 
 // todo; upgrade to structured logging
-// todo: set up routes.go
 // todo: set up tests
 // todo: consider json -> toml
 
@@ -47,17 +46,8 @@ func run() error {
 
 	r := mux.NewRouter()
 
-	// Routes
-	r.HandleFunc("/", homeHandler)
-	r.HandleFunc("/api/v1/testpublic", testPublic).Methods(http.MethodGet, http.MethodOptions)
-	r.Handle("/api/v1/testprivate", authMiddleware(http.HandlerFunc(testPrivate)))
-	r.Handle("/api/v1/testauthenticated", authMiddleware(http.HandlerFunc(testAuthenticated)))
-	r.HandleFunc("/api/v1/getuser", getUserHandler).Methods(http.MethodGet, http.MethodOptions) // /getuser?id=n
-	r.HandleFunc("/api/v1/insertuser", createUserInDb)
-
-	r.Use(mux.CORSMethodMiddleware(r))
-	r.Use(securityHeadersMiddleware)
-	r.Use(noCacheHeader)
+	// Setting up routes in a separate file
+	setupRoutes(r)
 
 	fmt.Println("Server is running on port:", port)
 	if err := http.ListenAndServe(":"+port, r); err != nil {
@@ -65,6 +55,7 @@ func run() error {
 	}
 	return nil
 }
+
 func dbConnect(ctx context.Context) (*api.Queries, error) {
 	connStr := "postgres://user:passwords@postgres:5432/API_DB?sslmode=disable"
 	conn, err := pgx.Connect(ctx, connStr)
