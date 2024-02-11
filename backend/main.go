@@ -56,6 +56,7 @@ func run() error {
 	r.HandleFunc("/api/v1/insertuser", createUserInDb)
 
 	r.Use(mux.CORSMethodMiddleware(r))
+	r.Use(noCacheHeader)
 
 	fmt.Println("Server is running on port:", port)
 	if err := http.ListenAndServe(":"+port, securityHeadersMiddleware(r)); err != nil {

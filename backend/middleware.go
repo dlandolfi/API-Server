@@ -19,6 +19,12 @@ func securityHeadersMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func noCacheHeader(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+	})
+}
+
 // Authentication Middleware
 func authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
