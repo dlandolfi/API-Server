@@ -15,16 +15,22 @@ import (
 
 // Handlers
 func getUserHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	if r.Method == http.MethodOptions {
+		return
+	}
+	id, err := strconv.Atoi(r.FormValue("id"))
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
 	ctx := context.Background()
 	queries, err := dbConnect(ctx)
 	if err != nil {
 		log.Println(err)
 	}
 
-	id, err := strconv.Atoi(r.FormValue("id"))
-	if err != nil {
-		log.Println(err)
-	}
 	user, err := queries.GetUser(ctx, int32(id))
 	if err != nil {
 		http.Error(w, "An error has occured", http.StatusBadRequest)
@@ -62,6 +68,10 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func testPublic(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	if r.Method == http.MethodOptions {
+		return
+	}
 	log.Println("Public Test route hit!")
 	io.WriteString(w, "Public route successful")
 }

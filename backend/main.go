@@ -49,11 +49,13 @@ func run() error {
 
 	// Routes
 	r.HandleFunc("/", homeHandler)
-	r.HandleFunc("/api/v1/testpublic", testPublic)
+	r.HandleFunc("/api/v1/testpublic", testPublic).Methods(http.MethodGet, http.MethodOptions)
 	r.Handle("/api/v1/testprivate", authMiddleware(http.HandlerFunc(testPrivate)))
 	r.Handle("/api/v1/testauthenticated", authMiddleware(http.HandlerFunc(testAuthenticated)))
-	r.HandleFunc("/api/v1/getuser", getUserHandler) // /getuser?id=n
+	r.HandleFunc("/api/v1/getuser", getUserHandler).Methods(http.MethodGet, http.MethodOptions) // /getuser?id=n
 	r.HandleFunc("/api/v1/insertuser", createUserInDb)
+
+	r.Use(mux.CORSMethodMiddleware(r))
 
 	fmt.Println("Server is running on port:", port)
 	if err := http.ListenAndServe(":"+port, securityHeadersMiddleware(r)); err != nil {
