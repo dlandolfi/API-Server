@@ -14,9 +14,6 @@ import (
 )
 
 // Handlers
-func foo(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "foo")
-}
 func getUserHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	if r.Method == http.MethodOptions {
