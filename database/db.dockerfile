@@ -1,0 +1,5 @@
+FROM postgres:alpine
+
+ENV POSTGRES_USER user
+ENV POSTGRES_PASSWORD passwords
+ENV POSTGRES_DB API_DB

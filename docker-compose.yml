@@ -11,11 +11,9 @@ services:
     command: ["app"]
 
   postgres:
-    image: postgres:alpine
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: passwords
-      POSTGRES_DB: API_DB
+    build:
+      context: ./database
+      dockerfile: db.dockerfile
     ports:
       - "5432:5432"
     volumes:
