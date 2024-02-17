@@ -75,12 +75,23 @@ func createUserInDb(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
+
+	err = r.ParseForm()
+	if err != nil {
+		http.Error(w, "Error parsing form data", http.StatusBadRequest)
+		return
+	}
+
+	firstName := r.FormValue("first_name")
+	lastName := r.FormValue("last_name")
+	email := r.FormValue("email")
 	_, err = queries.CreateUser(ctx, api.CreateUserParams{
-		FirstName: pgtype.Text{String: "Bruce", Valid: true},
-		LastName:  pgtype.Text{String: "Leo", Valid: true},
-		Email:     pgtype.Text{String: "leo@bruce.com", Valid: true},
+		FirstName: pgtype.Text{String: firstName, Valid: true},
+		LastName:  pgtype.Text{String: lastName, Valid: true},
+		Email:     pgtype.Text{String: email, Valid: true},
 	})
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Println("create user error:", err)
 	}
 }
