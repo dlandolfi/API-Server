@@ -1,5 +1,7 @@
 # Practice API server
 
+[[TOC]]
+
 This is a practice API server for my friends and I. Currently there is a Go backend and a Postgres database. There are plans to add more microservices soon.
 
 ## Getting Started
@@ -11,26 +13,50 @@ This is a practice API server for my friends and I. Currently there is a Go back
   - add the `-f` flag for realtime output
 - Shutdown and remove containers with `docker-compose down`
 
-## Endpoints
+## Routes
 
-### Home Route
+The routes package contains the `setupRoutes(r *mux.Router)` function, which is responsible for defining and configuring HTTP routes.
 
-- **Endpoint**: `/`
-- **Description**: Displays a simple "Hello World" message.
+### Route Definitions
 
-### Get User Route
+- Home Route
+  - Path: /
+  - Handler Function: homeHandler
+  - HTTP Methods: GET
+- Public Test Route
+  - Path: /api/v1/testpublic
+  - Handler Function: testPublic
+  - HTTP Methods: GET, OPTIONS
+- Private Test Route
+  - Path: /api/v1/testprivate
+  - Handler Function: authMiddleware(http.HandlerFunc(testPrivate))
+  - Middleware: authMiddleware
+  - HTTP Methods: All (wrapped with authentication middleware)
+- Authenticated Test Route
+  - Path: /api/v1/testauthenticated
+  - Handler Function: authMiddleware(http.HandlerFunc(testAuthenticated))
+  - Middleware: authMiddleware
+  - HTTP Methods: All (wrapped with authentication middleware)
+- Get User Route
+  - Path: /api/v1/getuser
+  - Handler Function: getUserHandler
+  - HTTP Methods: GET, OPTIONS
+  - Query Parameter: id (e.g., /getuser?id=n)
+- Insert User Route
+  - Path: /api/v1/insertuser
+  - Handler Function: createUserInDb
+  - HTTP Methods: POST, OPTIONS
+  - Parameters
+    - `first_name`: The first name of the user.
+    - `last_name`: The last name of the user.
+    - `email`: The email address of the user.
+- Get All Users Route
+  - Path: /api/v1/getallusers
+  - Handler Function: getAllUsersHandler
+  - HTTP Methods: GET, OPTIONS
 
-- **Endpoint**: `/api/v1/getuser`
-- **Description**: A route for querying the database for a user by id
-- **Usage**: `curl -X GET "/api/v1/getuser?id=123"`
+## Middlewares
 
-### Protected Test Route
-
-- **Endpoint**: `/api/v1/testprivate`
-- **Description**: A protected route requiring authentication.
-
-### Authenticated Test Route
-
-- **Endpoint**: `/api/v1/testauthenticated`
-- **Description**: An authenticated route making an external API request.
-- **Note**: A `config.json` with valid credentials will be needed.
+- CORS Method Middleware: Applied globally to handle Cross-Origin Resource Sharing (CORS) for HTTP methods.
+- Security Headers Middleware: Applied globally to enhance security by setting appropriate HTTP headers.
+- No Cache Header Middleware: Applied globally to prevent caching of responses.
