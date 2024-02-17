@@ -85,15 +85,21 @@ func createUserInDb(w http.ResponseWriter, r *http.Request) {
 	firstName := r.FormValue("first_name")
 	lastName := r.FormValue("last_name")
 	email := r.FormValue("email")
-	_, err = queries.CreateUser(ctx, api.CreateUserParams{
+
+	insertedUser, err := queries.CreateUser(ctx, api.CreateUserParams{
 		FirstName: pgtype.Text{String: firstName, Valid: true},
 		LastName:  pgtype.Text{String: lastName, Valid: true},
 		Email:     pgtype.Text{String: email, Valid: true},
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Println("create user error:", err)
+		log.Println("Create user error:", err)
+		return
 	}
+
+	log.Println("Inserted user:", insertedUser)
+	io.WriteString(w, "Successfully created user")
+
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
