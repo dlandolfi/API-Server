@@ -1,7 +1,5 @@
 # Practice API server
 
-[TOC]
-
 This is a practice API server for my friends and I. Currently there is a Go backend and a Postgres database. There are plans to add more microservices soon.
 
 ## Getting Started
