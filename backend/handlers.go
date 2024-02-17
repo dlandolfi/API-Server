@@ -47,6 +47,28 @@ func getUserHandler(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, result)
 }
 
+func getAllUsersHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+	queries, err := dbConnect(ctx)
+	if err != nil {
+		log.Println(err)
+	}
+
+	allUsers, err := queries.GetAllUsers(ctx)
+	if err != nil {
+		log.Println(err)
+	}
+
+	jsonData, err := json.Marshal(allUsers)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+
+	w.Write(jsonData)
+}
+
 func createUserInDb(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	queries, err := dbConnect(ctx)
