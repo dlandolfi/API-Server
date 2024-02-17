@@ -11,7 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createUser = `-- name: CreateUser :exec
+const createUser = `-- name: CreateUser :one
 INSERT INTO users (first_name, last_name, email) VALUES ($1, $2, $3) RETURNING id, first_name, last_name, email
 `
 
@@ -21,18 +21,71 @@ type CreateUserParams struct {
 	Email     pgtype.Text
 }
 
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
-	_, err := q.db.Exec(ctx, createUser, arg.FirstName, arg.LastName, arg.Email)
-	return err
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
+	row := q.db.QueryRow(ctx, createUser, arg.FirstName, arg.LastName, arg.Email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.LastName,
+		&i.Email,
+	)
+	return i, err
+}
+
+const getAllUsers = `-- name: GetAllUsers :many
+SELECT id, first_name, last_name, email FROM users
+`
+
+func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
+	rows, err := q.db.Query(ctx, getAllUsers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.FirstName,
+			&i.LastName,
+			&i.Email,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getUser = `-- name: GetUser :one
+
 SELECT id, first_name, last_name, email FROM users WHERE id = $1
 `
 
 // queries.sql
 func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
 	row := q.db.QueryRow(ctx, getUser, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.LastName,
+		&i.Email,
+	)
+	return i, err
+}
+
+const getUserByLastName = `-- name: GetUserByLastName :one
+SELECT id, first_name, last_name, email FROM users WHERE last_name = $1
+`
+
+func (q *Queries) GetUserByLastName(ctx context.Context, lastName pgtype.Text) (User, error) {
+	row := q.db.QueryRow(ctx, getUserByLastName, lastName)
 	var i User
 	err := row.Scan(
 		&i.ID,

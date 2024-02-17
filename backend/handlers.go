@@ -53,7 +53,7 @@ func createUserInDb(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	err = queries.CreateUser(ctx, api.CreateUserParams{
+	_, err = queries.CreateUser(ctx, api.CreateUserParams{
 		FirstName: pgtype.Text{String: "Bruce", Valid: true},
 		LastName:  pgtype.Text{String: "Leo", Valid: true},
 		Email:     pgtype.Text{String: "leo@bruce.com", Valid: true},
