@@ -20,7 +20,7 @@ func setupRoutes(r *mux.Router) {
 	h := handler.New(&handler.Config{
 		Schema: &schema,
 	})
-	r.Handle("/graphql", h)
+	r.Handle("/api/graphql", h)
 
 	// Applying middlewares
 	r.Use(mux.CORSMethodMiddleware(r))
