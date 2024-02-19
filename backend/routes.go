@@ -9,7 +9,11 @@ import (
 
 func setupRoutes(r *mux.Router) {
 	// Defining routes
-	r.HandleFunc("/", homeHandler)
+	// r.HandleFunc("/", homeHandler)
+
+	buildHandler := http.FileServer(http.Dir("../build"))
+	r.PathPrefix("/").Handler(buildHandler)
+
 	r.HandleFunc("/api/v1/testpublic", testPublic).Methods(http.MethodGet, http.MethodOptions)
 	r.Handle("/api/v1/testprivate", authMiddleware(http.HandlerFunc(testPrivate)))
 	r.Handle("/api/v1/testauthenticated", authMiddleware(http.HandlerFunc(testAuthenticated)))
