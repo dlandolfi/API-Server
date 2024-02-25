@@ -49,6 +49,13 @@ func run() error {
 	// Setting up routes in a separate file
 	setupRoutes(r)
 
+	// Websockets
+	hub := newHub()
+	go hub.run()
+	r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		serveWs(hub, w, r)
+	})
+
 	fmt.Println("Server is running on port:", port)
 	if err := http.ListenAndServe(":"+port, r); err != nil {
 		return err
