@@ -53,8 +53,6 @@ func run() error {
 	hub := newHub()
 	go hub.run()
 	r.HandleFunc("/api/ws", func(w http.ResponseWriter, r *http.Request) {
-		host := r.Header
-		fmt.Println(host)
 		serveWs(hub, w, r)
 	})
 
