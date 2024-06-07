@@ -25,3 +25,8 @@ services:
       dockerfile: redis.dockerfile
     ports:
       - "6379:6379"
+
+  fetcher:
+    build:
+      context: ./fetcher
+      dockerfile: fetcher.dockerfile
