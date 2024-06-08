@@ -41,8 +41,8 @@ func fetchPriceObject() (string, error) {
 }
 
 func fetchAndStore(rdb *redis.Client, ctx context.Context) {
-	// response, err := fetchPriceObject()
-	response, err := fakeFetch()
+	response, err := fetchPriceObject()
+	// response, err := fakeFetch()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -50,7 +50,6 @@ func fetchAndStore(rdb *redis.Client, ctx context.Context) {
 	if err != nil {
 		panic(err)
 	}
-
 }
 
 func fakeFetch() (string, error) {
@@ -58,7 +57,6 @@ func fakeFetch() (string, error) {
 }
 
 func main() {
-	// ExampleClient()
 	var ctx = context.Background()
 
 	rdb := redis.NewClient(&redis.Options{
@@ -92,37 +90,4 @@ func main() {
 	// Keep the main goroutine running
 	select {}
 
-}
-
-func ExampleClient() {
-
-	var ctx = context.Background()
-
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "redis:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
-
-	err := rdb.Set(ctx, "key", "value", 0).Err()
-	if err != nil {
-		panic(err)
-	}
-
-	val, err := rdb.Get(ctx, "key").Result()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("key", val)
-
-	val2, err := rdb.Get(ctx, "key2").Result()
-	if err == redis.Nil {
-		fmt.Println("key2 does not exist")
-	} else if err != nil {
-		panic(err)
-	} else {
-		fmt.Println("key2", val2)
-	}
-	// Output: key value
-	// key2 does not exist
 }
