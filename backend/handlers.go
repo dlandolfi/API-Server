@@ -11,9 +11,36 @@ import (
 	"strconv"
 
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/redis/go-redis/v9"
 )
 
 // Handlers
+func getPrice(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	if r.Method == http.MethodOptions {
+		return
+	}
+
+	var ctx = context.Background()
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     "redis:6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+
+	val, err := rdb.Get(ctx, "priceObject").Result()
+	if err != nil {
+		if err == redis.Nil {
+			fmt.Println("key does not exist")
+		} else {
+			panic(err)
+		}
+	}
+
+	log.Println("Price", val)
+	io.WriteString(w, "Price "+val)
+}
+
 func getUserHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	if r.Method == http.MethodOptions {

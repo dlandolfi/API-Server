@@ -39,6 +39,10 @@ func fetchPriceObject() (string, error) {
 	return priceObject, nil
 }
 
+func fakeFetch() (string, error) {
+	return "{stuff}", nil
+}
+
 func main() {
 	// ExampleClient()
 	var ctx = context.Background()
@@ -49,7 +53,8 @@ func main() {
 		DB:       0,  // use default DB
 	})
 
-	response, err := fetchPriceObject()
+	// response, err := fetchPriceObject()
+	response, err := fakeFetch()
 	if err != nil {
 		fmt.Println(err)
 	}
