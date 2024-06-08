@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -39,8 +40,21 @@ func fetchPriceObject() (string, error) {
 	return priceObject, nil
 }
 
+func fetchAndStore(rdb *redis.Client, ctx context.Context) {
+	// response, err := fetchPriceObject()
+	response, err := fakeFetch()
+	if err != nil {
+		fmt.Println(err)
+	}
+	err = rdb.Set(ctx, "priceObject", response, 0).Err()
+	if err != nil {
+		panic(err)
+	}
+
+}
+
 func fakeFetch() (string, error) {
-	return "{stuff}", nil
+	return "{stuffsss}", nil
 }
 
 func main() {
@@ -53,20 +67,31 @@ func main() {
 		DB:       0,  // use default DB
 	})
 
-	// response, err := fetchPriceObject()
-	response, err := fakeFetch()
-	if err != nil {
-		fmt.Println(err)
+	go fetchAndStore(rdb, ctx)
+	// Calculate the duration until the next 8am
+	now := time.Now()
+	nextTick := time.Date(now.Year(), now.Month(), now.Day(), 8, 0, 0, 0, now.Location())
+	if now.After(nextTick) {
+		// If it's already past 8am today, set the next tick for tomorrow
+		nextTick = nextTick.Add(24 * time.Hour)
 	}
-	err = rdb.Set(ctx, "priceObject", response, 0).Err()
-	if err != nil {
-		panic(err)
-	}
-	val, err := rdb.Get(ctx, "priceObject").Result()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("priceObject", val)
+	durationUntilNextTick := nextTick.Sub(now)
+
+	// Wait until the next 8am
+	time.AfterFunc(durationUntilNextTick, func() {
+		// Run fetchPrice at the next 8am
+		fetchAndStore(rdb, ctx)
+
+		// Set up a ticker to run fetchPrice every 24 hours from the next 8am
+		ticker := time.NewTicker(24 * time.Hour)
+		for range ticker.C {
+			fetchAndStore(rdb, ctx)
+		}
+	})
+
+	// Keep the main goroutine running
+	select {}
+
 }
 
 func ExampleClient() {
