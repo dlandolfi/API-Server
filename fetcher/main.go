@@ -4,33 +4,44 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/redis/go-redis/v9"
 )
 
-func fetchPrice() ([]byte, error) {
-	resp, err := http.Get("https://api.metals.dev/v1/metal/spot?api_key=1XXURGAUJCZZAWTFJPHB808TFJPHB&metal=gold&currency=USD")
+func fetchPriceObject() (string, error) {
+	url := "https://api.metals.dev/v1/metal/spot"
+	client := http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
+	}
+
+	q := req.URL.Query()
+	q.Add("api_key", "1XXURGAUJCZZAWTFJPHB808TFJPHB")
+	q.Add("metal", "gold")
+	q.Add("currency", "USD")
+
+	req.URL.RawQuery = q.Encode()
+
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err)
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch gold price: status %s", resp.Status)
-	}
-
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %v", err)
+		log.Fatal(err)
 	}
-
-	return body, nil
+	priceObject := string(body)
+	return priceObject, nil
 }
 
 func main() {
 	// ExampleClient()
-	response, err := fetchPrice()
+	response, err := fetchPriceObject()
 	if err != nil {
 		fmt.Println(err)
 	}
