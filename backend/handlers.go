@@ -37,8 +37,7 @@ func getPrice(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	log.Println("Price", val)
-	fmt.Fprintf(w, "Price "+val)
+	fmt.Fprint(w, val)
 }
 
 func getUserHandler(w http.ResponseWriter, r *http.Request) {
