@@ -1,6 +1,6 @@
 module danothebard.com/m/v2
 
-go 1.22.4
+go 1.21
 
 require github.com/redis/go-redis/v9 v9.5.3
 
