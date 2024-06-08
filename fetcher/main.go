@@ -41,11 +41,27 @@ func fetchPriceObject() (string, error) {
 
 func main() {
 	// ExampleClient()
+	var ctx = context.Background()
+
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     "redis:6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+
 	response, err := fetchPriceObject()
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(string(response))
+	err = rdb.Set(ctx, "priceObject", response, 0).Err()
+	if err != nil {
+		panic(err)
+	}
+	val, err := rdb.Get(ctx, "priceObject").Result()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("priceObject", val)
 }
 
 func ExampleClient() {
