@@ -32,8 +32,10 @@ func fetchPriceObject() (string, error) {
 	q.Add("metal", "gold")
 	q.Add("currency", "USD")
 
+	// Build new URL
 	req.URL.RawQuery = q.Encode()
 
+	// Execute request
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
@@ -50,7 +52,6 @@ func fetchPriceObject() (string, error) {
 
 func fetchAndStore(rdb *redis.Client, ctx context.Context) {
 	response, err := fetchPriceObject()
-	// response, err := fakeFetch()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -58,10 +59,6 @@ func fetchAndStore(rdb *redis.Client, ctx context.Context) {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func fakeFetch() (string, error) {
-	return "{stuffsss}", nil
 }
 
 func main() {
