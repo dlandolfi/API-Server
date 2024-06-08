@@ -12,6 +12,11 @@ import (
 )
 
 func fetchPriceObject() (string, error) {
+	config, err := loadConfig("config.json")
+	if err != nil {
+		log.Fatalf("Error loading config: %v", err)
+	}
+
 	url := "https://api.metals.dev/v1/metal/spot"
 	client := http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -20,7 +25,7 @@ func fetchPriceObject() (string, error) {
 	}
 
 	q := req.URL.Query()
-	q.Add("api_key", "1XXURGAUJCZZAWTFJPHB808TFJPHB")
+	q.Add("api_key", config.APIKey)
 	q.Add("metal", "gold")
 	q.Add("currency", "USD")
 
