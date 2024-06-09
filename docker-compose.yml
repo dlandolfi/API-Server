@@ -30,3 +30,5 @@ services:
     build:
       context: ./fetcher
       dockerfile: fetcher.dockerfile
+    depends_on:
+      - redis
