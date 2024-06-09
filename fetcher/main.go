@@ -70,8 +70,8 @@ func main() {
 
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "redis:6379",
-		Password: config.REDISPW, // no password set
-		DB:       0,              // use default DB
+		Password: config.REDISPW,
+		DB:       0, // use default DB
 	})
 
 	go fetchAndStore(rdb, ctx)

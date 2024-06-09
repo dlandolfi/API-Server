@@ -29,8 +29,8 @@ func getPrice(w http.ResponseWriter, r *http.Request) {
 	var ctx = context.Background()
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "redis:6379",
-		Password: config.REDISPW, // no password set
-		DB:       0,              // use default DB
+		Password: config.REDISPW,
+		DB:       0, // use default DB
 	})
 
 	val, err := rdb.Get(ctx, "priceObject").Result()
