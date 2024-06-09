@@ -8,6 +8,7 @@ import (
 type Config struct {
 	HRMS        HRMS        `json:"HRMS"`
 	SSOProvider SSOProvider `json:"SSOProvider"`
+	REDISPW     string      `json:"redis_pw"`
 }
 
 type HRMS struct {

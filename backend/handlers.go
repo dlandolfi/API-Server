@@ -21,11 +21,16 @@ func getPrice(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	config, err := loadConfig("config.json")
+	if err != nil {
+		fmt.Println("Error loading config:", err)
+	}
+
 	var ctx = context.Background()
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "redis:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
+		Password: config.REDISPW, // no password set
+		DB:       0,              // use default DB
 	})
 
 	val, err := rdb.Get(ctx, "priceObject").Result()

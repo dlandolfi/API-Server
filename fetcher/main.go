@@ -63,11 +63,15 @@ func fetchAndStore(rdb *redis.Client, ctx context.Context) {
 
 func main() {
 	var ctx = context.Background()
+	config, err := loadConfig("config.json")
+	if err != nil {
+		log.Fatalf("Error loading config: %v", err)
+	}
 
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "redis:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
+		Password: config.REDISPW, // no password set
+		DB:       0,              // use default DB
 	})
 
 	go fetchAndStore(rdb, ctx)

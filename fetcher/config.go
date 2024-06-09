@@ -6,7 +6,8 @@ import (
 )
 
 type Config struct {
-	APIKey string `json:"metals_api_key"`
+	APIKey  string `json:"metals_api_key"`
+	REDISPW string `json:"redis_pw"`
 }
 
 func loadConfig(filename string) (Config, error) {
