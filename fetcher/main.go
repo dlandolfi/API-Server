@@ -11,58 +11,52 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func fetchPriceObject() (string, error) {
-	// Load config
-	config, err := loadConfig("config.json")
-	if err != nil {
-		log.Fatalf("Error loading config: %v", err)
-	}
-
-	// Build new http client
+func fetchPriceObject(apiKey string) (string, error) {
 	url := "https://api.metals.dev/v1/metal/spot"
-	client := http.Client{}
+	client := http.Client{Timeout: 10 * time.Second}
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		log.Fatal(err)
+		return "", fmt.Errorf("creating request: %w", err)
 	}
 
-	// Add query params
 	q := req.URL.Query()
-	q.Add("api_key", config.APIKey)
+	q.Add("api_key", apiKey)
 	q.Add("metal", "gold")
 	q.Add("currency", "USD")
-
-	// Build new URL
 	req.URL.RawQuery = q.Encode()
 
-	// Execute request
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		return "", fmt.Errorf("executing request: %w", err)
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err)
+		return "", fmt.Errorf("reading response body: %w", err)
 	}
-	priceObject := string(body)
-	return priceObject, nil
+	return string(body), nil
 }
 
-func fetchAndStore(rdb *redis.Client, ctx context.Context) {
-	response, err := fetchPriceObject()
+func fetchAndStore(rdb *redis.Client, ctx context.Context, apiKey string) error {
+	response, err := fetchPriceObject(apiKey)
 	if err != nil {
-		fmt.Println(err)
+		return fmt.Errorf("fetching price object: %w", err)
 	}
+
 	err = rdb.Set(ctx, "priceObject", response, 0).Err()
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("storing in Redis: %w", err)
 	}
+
+	return nil
 }
 
 func main() {
-	var ctx = context.Background()
 	config, err := loadConfig("config.json")
 	if err != nil {
 		log.Fatalf("Error loading config: %v", err)
@@ -73,30 +67,37 @@ func main() {
 		Password: config.REDISPW,
 		DB:       0, // use default DB
 	})
+	defer rdb.Close()
 
-	go fetchAndStore(rdb, ctx)
+	ctx := context.Background()
+
+	// Run the fetch and store function immediately
+	go func() {
+		if err := fetchAndStore(rdb, ctx, config.APIKey); err != nil {
+			log.Printf("Error in initial fetch and store: %v", err)
+		}
+	}()
+
 	// Calculate the duration until the next 8am
 	now := time.Now()
 	nextTick := time.Date(now.Year(), now.Month(), now.Day(), 8, 0, 0, 0, now.Location())
 	if now.After(nextTick) {
-		// If it's already past 8am today, set the next tick for tomorrow
 		nextTick = nextTick.Add(24 * time.Hour)
 	}
 	durationUntilNextTick := nextTick.Sub(now)
 
-	// Wait until the next 8am
 	time.AfterFunc(durationUntilNextTick, func() {
-		// Run fetchPrice at the next 8am
-		fetchAndStore(rdb, ctx)
+		if err := fetchAndStore(rdb, ctx, config.APIKey); err != nil {
+			log.Printf("Error in fetch and store at 8am: %v", err)
+		}
 
-		// Set up a ticker to run fetchPrice every 24 hours from the next 8am
 		ticker := time.NewTicker(24 * time.Hour)
 		for range ticker.C {
-			fetchAndStore(rdb, ctx)
+			if err := fetchAndStore(rdb, ctx, config.APIKey); err != nil {
+				log.Printf("Error in fetch and store on ticker: %v", err)
+			}
 		}
 	})
 
-	// Keep the main goroutine running
 	select {}
-
 }
