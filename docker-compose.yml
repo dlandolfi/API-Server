@@ -1,5 +1,9 @@
 version: "3"
 
+networks:
+  docker-network:
+    driver: bridge
+
 services:
   go-api-server:
     build:
@@ -9,6 +13,8 @@ services:
       - "8080:8080"
     restart: always
     command: ["app"]
+    networks:
+      - docker-network
 
   postgres:
     build:
@@ -18,3 +24,21 @@ services:
       - "5432:5432"
     volumes:
       - ./database/data:/var/lib/postgresql/data
+    networks:
+      - docker-network
+
+  redis:
+    build:
+      context: ./redis
+      dockerfile: redis.dockerfile
+    networks:
+      - docker-network
+
+  fetcher:
+    build:
+      context: ./fetcher
+      dockerfile: fetcher.dockerfile
+    depends_on:
+      - redis
+    networks:
+      - docker-network

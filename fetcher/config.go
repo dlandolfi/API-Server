@@ -6,18 +6,8 @@ import (
 )
 
 type Config struct {
-	HRMS        HRMS        `json:"HRMS"`
-	SSOProvider SSOProvider `json:"SSOProvider"`
-	REDISPW     string      `json:"redis_pw"`
-}
-
-type HRMS struct {
-	URL   string `json:"url"`
-	Token string `json:"token"`
-}
-
-type SSOProvider struct {
-	UserInfoURL string `json:"userInfoUrl"`
+	APIKey  string `json:"metals_api_key"`
+	REDISPW string `json:"redis_pw"`
 }
 
 func loadConfig(filename string) (Config, error) {
