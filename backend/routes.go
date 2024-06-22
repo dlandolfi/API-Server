@@ -17,6 +17,7 @@ func setupRoutes(r *mux.Router) {
 	r.HandleFunc("/api/v1/insertuser", createUserInDb).Methods(http.MethodPost, http.MethodOptions)
 	r.HandleFunc("/api/v1/getallusers", getAllUsersHandler).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/v1/getprice", getPrice).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/v1/newsfeed", getNewsFeed).Methods(http.MethodGet, http.MethodOptions)
 
 	h := handler.New(&handler.Config{
 		Schema: &schema,

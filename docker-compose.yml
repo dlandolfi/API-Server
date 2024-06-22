@@ -42,3 +42,13 @@ services:
       - redis
     networks:
       - docker-network
+
+  ruby_server:
+    build:
+      context: ./ruby_server
+      dockerfile: ruby_server.dockerfile
+    ports:
+      - "3000:3000"
+    restart: always
+    networks:
+      - docker-network
