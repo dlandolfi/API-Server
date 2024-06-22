@@ -7,7 +7,8 @@ require 'date'
 
 class ApiController < ApplicationController
   def newsfeed
-    rss_urls = ['https://www.coffeereview.com/feed/', 'https://concretewaves.com/longboards/feed/',
+    rss_urls = ['https://www.coffeereview.com/feed/',
+                'https://concretewaves.com/longboards/feed/',
                 'https://www.nomadicmatt.com/feed/']
 
     first_items = rss_urls.map do |url|

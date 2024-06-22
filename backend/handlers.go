@@ -18,7 +18,6 @@ import (
 func getNewsFeed(w http.ResponseWriter, r *http.Request) {
 	rubyServerURL := "http://ruby_server:3000/api/newsfeed"
 
-	// Make the GET request to the ruby_server
 	resp, err := http.Get(rubyServerURL)
 	if err != nil {
 		http.Error(w, "Failed to fetch data from ruby_server", http.StatusInternalServerError)
@@ -26,14 +25,12 @@ func getNewsFeed(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	// Read the response body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		http.Error(w, "Failed to read response from ruby_server", http.StatusInternalServerError)
 		return
 	}
 
-	// Set the content type and write the response body to the client
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(body)
 }
