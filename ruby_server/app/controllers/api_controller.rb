@@ -1,23 +1,30 @@
 require 'rss'
+require 'nokogiri'
 require 'open-uri'
+require 'date'
 
 class ApiController < ApplicationController
   def newsfeed
-    rss_url = 'https://www.coffeereview.com/feed/' # Replace with the actual RSS feed URL
-    rss_content = URI.open(rss_url).read
-    rss = RSS::Parser.parse(rss_content, false)
+    rss_urls = ['https://www.coffeereview.com/feed/', 'https://concretewaves.com/longboards/feed/', 'https://www.nomadicmatt.com/feed/'] 
 
-    # Get the first item from the RSS feed
-    first_item = rss.items.first
+    first_items = rss_urls.map do |url|
+      rss_content = URI.open(url).read
+      rss = RSS::Parser.parse(rss_content, false)
+      rss.items.first
+    end
 
-    # Transform the first item as needed
-    transformed_item = {
-      title: first_item.title,
-      link: first_item.link,
-      pub_date: first_item.pubDate
-    }
+    # Transform the first items as needed
+    transformed_items = first_items.map do |item|
+      stripped_description=Nokogiri::HTML(item.description).text
+      {
+        title: item.title,
+        description: "#{stripped_description[0,50]}...",
+        link: item.link,
+        pub_date: item.pubDate.strftime('%B %d, %Y')
+      }
+    end
 
-    render json: transformed_item
+    render json: transformed_items
   end
 end
 

@@ -29,3 +29,5 @@ end
 
 
 gem "rss", "~> 0.3.0"
+
+gem "nokogiri", "~> 1.16"
