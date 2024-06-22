@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rss'
 require 'nokogiri'
 require 'open-uri'
@@ -5,7 +7,8 @@ require 'date'
 
 class ApiController < ApplicationController
   def newsfeed
-    rss_urls = ['https://www.coffeereview.com/feed/', 'https://concretewaves.com/longboards/feed/', 'https://www.nomadicmatt.com/feed/'] 
+    rss_urls = ['https://www.coffeereview.com/feed/', 'https://concretewaves.com/longboards/feed/',
+                'https://www.nomadicmatt.com/feed/']
 
     first_items = rss_urls.map do |url|
       rss_content = URI.open(url).read
@@ -15,10 +18,10 @@ class ApiController < ApplicationController
 
     # Transform the first items as needed
     transformed_items = first_items.map do |item|
-      stripped_description=Nokogiri::HTML(item.description).text
+      stripped_description = Nokogiri::HTML(item.description).text
       {
         title: item.title,
-        description: "#{stripped_description[0,50]}...",
+        description: "#{stripped_description[0, 50]}...",
         link: item.link,
         pub_date: item.pubDate.strftime('%B %d, %Y')
       }
@@ -27,4 +30,3 @@ class ApiController < ApplicationController
     render json: transformed_items
   end
 end
-
