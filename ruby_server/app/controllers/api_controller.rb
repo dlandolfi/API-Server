@@ -7,15 +7,17 @@ class ApiController < ApplicationController
     rss_content = URI.open(rss_url).read
     rss = RSS::Parser.parse(rss_content, false)
 
-    transformed_items = rss.items.map do |item|
-      {
-        title: item.title,
-        link: item.link,
-        pub_date: item.pubDate
-      }
-    end
+    # Get the first item from the RSS feed
+    first_item = rss.items.first
 
-    render json: transformed_items
+    # Transform the first item as needed
+    transformed_item = {
+      title: first_item.title,
+      link: first_item.link,
+      pub_date: first_item.pubDate
+    }
+
+    render json: transformed_item
   end
 end
 
