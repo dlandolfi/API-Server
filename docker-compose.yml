@@ -42,3 +42,11 @@ services:
       - redis
     networks:
       - docker-network
+
+  ruby_server:
+    build:
+      context: ./ruby_server
+      dockerfile: ruby_server.dockerfile
+    restart: always
+    networks:
+      - docker-network

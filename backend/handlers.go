@@ -15,6 +15,27 @@ import (
 )
 
 // Handlers
+func getNewsFeed(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	rubyServerURL := "http://ruby_server:3000/api/newsfeed"
+
+	resp, err := http.Get(rubyServerURL)
+	if err != nil {
+		http.Error(w, "Failed to fetch data from ruby_server", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		http.Error(w, "Failed to read response from ruby_server", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(body)
+}
 func getPrice(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	if r.Method == http.MethodOptions {
