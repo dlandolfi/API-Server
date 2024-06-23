@@ -16,6 +16,8 @@ import (
 
 // Handlers
 func getNewsFeed(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	rubyServerURL := "http://ruby_server:3000/api/newsfeed"
 
 	resp, err := http.Get(rubyServerURL)
