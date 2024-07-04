@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
+	"github.com/robfig/cron/v3"
 )
 
 func fetchPriceObject(apiKey string) (string, error) {
@@ -72,32 +73,18 @@ func main() {
 	ctx := context.Background()
 
 	// Run the fetch and store function immediately
-	go func() {
-		if err := fetchAndStore(rdb, ctx, config.APIKey); err != nil {
-			log.Printf("Error in initial fetch and store: %v", err)
-		}
-	}()
-
-	// Calculate the duration until the next 8am
-	now := time.Now()
-	nextTick := time.Date(now.Year(), now.Month(), now.Day(), 8, 0, 0, 0, now.Location())
-	if now.After(nextTick) {
-		nextTick = nextTick.Add(24 * time.Hour)
+	if err := fetchAndStore(rdb, ctx, config.APIKey); err != nil {
+		log.Printf("Error in initial fetch and store: %v", err)
 	}
-	durationUntilNextTick := nextTick.Sub(now)
 
-	time.AfterFunc(durationUntilNextTick, func() {
+	c := cron.New()
+	c.AddFunc("0 0 * * *", func() {
 		if err := fetchAndStore(rdb, ctx, config.APIKey); err != nil {
 			log.Printf("Error in fetch and store at 8am: %v", err)
 		}
-
-		ticker := time.NewTicker(24 * time.Hour)
-		for range ticker.C {
-			if err := fetchAndStore(rdb, ctx, config.APIKey); err != nil {
-				log.Printf("Error in fetch and store on ticker: %v", err)
-			}
-		}
 	})
+	c.Start()
+	defer c.Stop()
 
 	select {}
 }
