@@ -17,24 +17,32 @@ import (
 // Handlers
 func getNewsFeed(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-
-	rubyServerURL := "http://ruby_server:3000/api/newsfeed"
-
-	resp, err := http.Get(rubyServerURL)
-	if err != nil {
-		http.Error(w, "Failed to fetch data from ruby_server", http.StatusInternalServerError)
-		return
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		http.Error(w, "Failed to read response from ruby_server", http.StatusInternalServerError)
+	if r.Method == http.MethodOptions {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(body)
+	config, err := loadConfig("config.json")
+	if err != nil {
+		fmt.Println("Error loading config:", err)
+	}
+
+	var ctx = context.Background()
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     "redis:6379",
+		Password: config.REDISPW,
+		DB:       0, // use default DB
+	})
+
+	val, err := rdb.Get(ctx, "newsResponse").Result()
+	if err != nil {
+		if err == redis.Nil {
+			fmt.Println("key does not exist")
+		} else {
+			panic(err)
+		}
+	}
+
+	fmt.Fprint(w, val)
 }
 func getPrice(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")

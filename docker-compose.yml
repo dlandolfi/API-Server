@@ -40,6 +40,7 @@ services:
       dockerfile: fetcher.dockerfile
     depends_on:
       - redis
+      - ruby_server
     networks:
       - docker-network
 
