@@ -17,9 +17,7 @@ class ApiController < ApplicationController
       rss.items[0] # Only using the top item of each feed
     end
 
-    # Transform the first items
     transformed_items = first_items.map do |item|
-      # This is used to strip html from the description
       stripped_description = Nokogiri::HTML(item.description).text
       {
         title: item.title,
