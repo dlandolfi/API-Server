@@ -6,8 +6,10 @@ import (
 )
 
 type Config struct {
-	APIKey  string `json:"metals_api_key"`
-	REDISPW string `json:"redis_pw"`
+	APIKey      string `json:"metals_api_key"`
+	REDISPW     string `json:"redis_pw"`
+	PriceURL    string `json:"PriceURL"`
+	NewsFeedURL string `json:"NewsFeedURL"`
 }
 
 func loadConfig(filename string) (Config, error) {
